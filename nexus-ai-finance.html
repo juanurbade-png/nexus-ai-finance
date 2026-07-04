@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#05070A">
+<title>NEXUS AI FINANCE — Gestión Inteligente de Inversiones</title>
+<meta name="description" content="Plataforma de inversión potenciada por IA: análisis de mercado en tiempo real, simulación de portafolios y onboarding de riesgo inteligente.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          abyss: '#05070A',
+          panel: '#0A0E14',
+          panel2: '#0D1219',
+        },
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        },
+        boxShadow: {
+          neon: '0 0 30px -5px rgba(16,185,129,0.45)',
+          cyanGlow: '0 0 30px -5px rgba(6,182,212,0.45)',
+        },
+      }
+    }
+  }
+</script>
+<style>
+  :root{--neon:#10B981;--cyan:#06B6D4;}
+  *{-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',sans-serif;background-color:#05070A;color:#E5E7EB;overflow-x:hidden;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-track{background:#05070A;}
+  ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#10B981,#06B6D4);border-radius:10px;}
+  ::selection{background:rgba(16,185,129,.35);color:#fff;}
+
+  .bg-grid{background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:42px 42px;}
+  .grid-fade{-webkit-mask-image:radial-gradient(ellipse 60% 50% at 50% 0%,#000 40%,transparent 100%);mask-image:radial-gradient(ellipse 60% 50% at 50% 0%,#000 40%,transparent 100%);}
+
+  .glass{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);}
+
+  .grad-border{position:relative;}
+  .grad-border::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(140deg,rgba(16,185,129,.55),rgba(6,182,212,.35),rgba(255,255,255,.03));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+
+  .text-grad{background:linear-gradient(90deg,#10B981,#06B6D4);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  .ticker-track{display:flex;width:max-content;animation:ticker-scroll 32s linear infinite;}
+  @keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .ticker-track:hover{animation-play-state:paused;}
+
+  .blob{position:absolute;border-radius:9999px;filter:blur(90px);opacity:.28;pointer-events:none;}
+  @keyframes blob-float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-40px) scale(1.08);}66%{transform:translate(-25px,25px) scale(.95);}}
+  .blob-anim{animation:blob-float 18s ease-in-out infinite;}
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.21,.68,.29,1),transform .8s cubic-bezier(.21,.68,.29,1);}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    .ticker-track,.blob-anim,.orbit-dot,.animate-pulse-slow{animation:none !important;}
+  }
+
+  input[type=range].nexus-slider{-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;background:rgba(255,255,255,.08);outline:none;}
+  input[type=range].nexus-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 0 0 4px rgba(16,185,129,.25),0 0 14px rgba(16,185,129,.7);cursor:pointer;border:2px solid #10B981;margin-top:-7px;transition:transform .15s ease;}
+  input[type=range].nexus-slider::-webkit-slider-thumb:hover{transform:scale(1.15);}
+  input[type=range].nexus-slider::-moz-range-thumb{width:18px;height:18px;border-radius:999px;background:#fff;box-shadow:0 0 0 4px rgba(16,185,129,.25),0 0 14px rgba(16,185,129,.7);cursor:pointer;border:2px solid #10B981;}
+  input[type=range].nexus-slider::-webkit-slider-runnable-track{height:6px;border-radius:999px;}
+  input[type=range].nexus-slider::-moz-range-track{height:6px;border-radius:999px;background:rgba(255,255,255,.08);}
+  input[type=range].nexus-slider:focus-visible::-webkit-slider-thumb{outline:2px solid #fff;outline-offset:2px;}
+
+  .toggle-switch{width:46px;height:26px;border-radius:999px;background:rgba(255,255,255,.12);position:relative;transition:background .25s ease;flex-shrink:0;border:none;cursor:pointer;}
+  .toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:999px;background:#9CA3AF;transition:all .25s cubic-bezier(.4,0,.2,1);}
+  .toggle-switch.active{background:linear-gradient(90deg,#10B981,#06B6D4);}
+  .toggle-switch.active::after{left:23px;background:#05070A;box-shadow:0 0 8px rgba(255,255,255,.6);}
+  .toggle-switch:focus-visible{outline:2px solid #10B981;outline-offset:2px;}
+
+  .option-card{transition:all .2s ease;cursor:pointer;}
+  .option-card.selected{border-color:rgba(16,185,129,.8);background:rgba(16,185,129,.08);box-shadow:0 0 0 1px rgba(16,185,129,.4),0 0 24px -6px rgba(16,185,129,.5);}
+  .option-card.selected .option-dot{border-color:#10B981;}
+  .option-dot{transition:all .2s ease;position:relative;}
+  .option-dot::after{content:'';position:absolute;inset:3px;border-radius:999px;background:#10B981;transform:scale(0);transition:transform .15s ease;}
+  .option-card.selected .option-dot::after{transform:scale(1);}
+
+  @keyframes orbit{from{transform:rotate(0deg) translateX(var(--r)) rotate(0deg);}to{transform:rotate(360deg) translateX(var(--r)) rotate(-360deg);}}
+  .orbit-dot{position:absolute;top:50%;left:50%;margin:-4px;width:8px;height:8px;border-radius:999px;animation:orbit linear infinite;}
+
+  @keyframes pulse-slow{0%,100%{opacity:1;}50%{opacity:.45;}}
+  .animate-pulse-slow{animation:pulse-slow 2.6s ease-in-out infinite;}
+
+  .expand-panel{max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0;}
+  .expand-panel.open{max-height:400px;opacity:1;}
+
+  a:focus-visible, button:focus-visible{outline:2px solid #10B981;outline-offset:2px;border-radius:4px;}
+</style>
+</head>
+<body class="bg-abyss text-gray-200 antialiased">
+
+<!-- ICON SPRITE (SVG integrados, estilo Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-logo" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="currentColor"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5l7.5 3.4v5.4c0 5-3.2 8.7-7.5 10.2-4.3-1.5-7.5-5.2-7.5-10.2V5.9L12 2.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="none"/><path d="M8.7 12.2l2.2 2.2 4.4-4.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M7.5 10.5V7.5a4.5 4.5 0 019 0v3" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="12" cy="15.2" r="1.3" fill="currentColor"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M3 12h18M12 3c2.8 2.6 4.3 5.6 4.3 9s-1.5 6.4-4.3 9c-2.8-2.6-4.3-5.6-4.3-9s1.5-6.4 4.3-9z" stroke="currentColor" stroke-width="1.6" fill="none"/></symbol>
+<symbol id="i-news" viewBox="0 0 24 24"><rect x="3" y="4.5" width="14" height="15" rx="1.5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M17 8.5h4v9a2 2 0 01-2 2h-2M6.5 8.5h7M6.5 12h7M6.5 15.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M5 21V10M5 6V3M12 21v-4M12 13V3M19 21v-8M19 9V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="5" cy="13" r="2.2" fill="#05070A" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="16.5" r="2.2" fill="#05070A" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="12" r="2.2" fill="#05070A" stroke="currentColor" stroke-width="1.6"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3 7.5a2 2 0 012-2h11a2 2 0 012 2V9h-4.5a3 3 0 000 6H18v1.5a2 2 0 01-2 2H5a2 2 0 01-2-2v-9z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="15.5" cy="12" r="1.1" fill="currentColor"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M9.5 14.5l5-5M8 16.5l-1.8 1.8a3.2 3.2 0 01-4.5-4.5L4 12M16 7.5l1.8-1.8a3.2 3.2 0 014.5 4.5L20.5 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0115.3-6.4M21 12a9 9 0 01-15.3 6.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M18.3 3v4.6h-4.6M5.7 21v-4.6h4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.7-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.7L12 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" fill="none"/></symbol>
+<symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="3" width="10" height="18" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="14" y="9" width="6" height="12" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M7 6.5h1.2M10.8 6.5H12M7 10h1.2M10.8 10H12M7 13.5h1.2M10.8 13.5H12M17 12.5h1.2M17 16h1.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
+<symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 7v10M9.5 9.3c0-1.1 1.1-1.8 2.5-1.8s2.5.7 2.5 1.7c0 2.4-5 1.1-5 3.5 0 1 1.1 1.7 2.5 1.7s2.5-.6 2.5-1.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/></symbol>
+<symbol id="i-bars" viewBox="0 0 24 24"><path d="M4 20V11M12 20V4M20 20v-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2L4 14h6.5L10 22l9-13h-6.5L13 2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" fill="currentColor"/></symbol>
+</defs>
+</svg>
+
+<!-- HEADER -->
+<header id="main-header" class="sticky top-0 z-50 transition-all duration-300 border-b border-transparent">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="flex items-center justify-between h-16 md:h-[72px]">
+      <a href="#hero" class="flex items-center gap-2.5 group">
+        <span class="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:shadow-neon transition-shadow">
+          <svg class="w-5 h-5"><use href="#i-logo"/></svg>
+        </span>
+        <span class="font-extrabold tracking-tight text-lg text-white">NEXUS <span class="text-grad font-black">AI</span> <span class="font-light text-gray-400">Finance</span></span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-8 text-sm text-gray-400">
+        <a href="#sentinel" class="hover:text-white transition-colors">AI Sentinel</a>
+        <a href="#portfolio-lab" class="hover:text-white transition-colors">Portfolio Lab</a>
+        <a href="#risk-onboarding" class="hover:text-white transition-colors">Perfil de Riesgo</a>
+        <a href="#asset-hub" class="hover:text-white transition-colors">Asset Hub</a>
+        <a href="#fiscal-monitor" class="hover:text-white transition-colors">Rend. Fiscal</a>
+      </nav>
+
+      <div class="hidden lg:flex items-center gap-3">
+        <button class="text-sm text-gray-300 hover:text-white transition-colors px-4 py-2">Ingresar</button>
+        <a href="#portfolio-lab" class="text-sm font-semibold bg-white text-abyss px-5 py-2.5 rounded-lg hover:shadow-neon transition-all hover:-translate-y-0.5">Comenzar Ahora</a>
+      </div>
+
+      <button id="menu-btn" class="lg:hidden text-gray-300 w-10 h-10 flex items-center justify-center" aria-label="Abrir menú">
+        <svg class="w-6 h-6"><use href="#i-menu" id="menu-icon-use"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden lg:hidden glass border-t border-white/5 px-5 py-4">
+    <nav class="flex flex-col gap-1 text-sm">
+      <a href="#sentinel" class="py-3 text-gray-300 border-b border-white/5">AI Sentinel</a>
+      <a href="#portfolio-lab" class="py-3 text-gray-300 border-b border-white/5">Portfolio Lab</a>
+      <a href="#risk-onboarding" class="py-3 text-gray-300 border-b border-white/5">Perfil de Riesgo</a>
+      <a href="#asset-hub" class="py-3 text-gray-300 border-b border-white/5">Asset Hub</a>
+      <a href="#fiscal-monitor" class="py-3 text-gray-300">Rendimiento Fiscal</a>
+      <a href="#portfolio-lab" class="mt-3 text-center font-semibold bg-white text-abyss px-5 py-3 rounded-lg">Comenzar Ahora</a>
+    </nav>
+  </div>
+</header>
+
+<!-- TICKER -->
+<div id="ticker-wrap" class="sticky top-16 md:top-[72px] z-40 bg-black/60 backdrop-blur border-b border-white/5 overflow-hidden h-9 flex items-center">
+  <div class="ticker-track text-xs md:text-[13px]">
+    <div class="flex items-center gap-10 pr-10">
+      <span class="flex items-center gap-1.5 text-gray-400 pl-5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-slow"></span>IA ESCANEANDO</span>
+      <span class="text-gray-300">Bloomberg <span class="text-emerald-400 font-medium">+0.5%</span></span>
+      <span class="text-gray-300">Reuters: <span class="text-amber-400">Alerta Inflación</span></span>
+      <span class="text-gray-300">Forbes: <span class="text-cyan-400">Oportunidad en Tech</span></span>
+      <span class="text-gray-300">WSJ <span class="text-emerald-400 font-medium">S&amp;P 500 +0.8%</span></span>
+      <span class="text-gray-300">FT: <span class="text-cyan-400">Rally en Semiconductores</span></span>
+      <span class="text-gray-300">Nasdaq <span class="text-emerald-400 font-medium">+1.2%</span></span>
+    </div>
+    <div class="flex items-center gap-10 pr-10" aria-hidden="true">
+      <span class="flex items-center gap-1.5 text-gray-400 pl-5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-slow"></span>IA ESCANEANDO</span>
+      <span class="text-gray-300">Bloomberg <span class="text-emerald-400 font-medium">+0.5%</span></span>
+      <span class="text-gray-300">Reuters: <span class="text-amber-400">Alerta Inflación</span></span>
+      <span class="text-gray-300">Forbes: <span class="text-cyan-400">Oportunidad en Tech</span></span>
+      <span class="text-gray-300">WSJ <span class="text-emerald-400 font-medium">S&amp;P 500 +0.8%</span></span>
+      <span class="text-gray-300">FT: <span class="text-cyan-400">Rally en Semiconductores</span></span>
+      <span class="text-gray-300">Nasdaq <span class="text-emerald-400 font-medium">+1.2%</span></span>
+    </div>
+  </div>
+</div>
+<main>
+<!-- ============ 1. HERO & LIVE INTELLIGENCE ============ -->
+<section id="hero" class="relative pb-24 md:pb-32 overflow-hidden">
+  <div class="absolute inset-0 bg-grid grid-fade opacity-40"></div>
+  <div class="blob blob-anim w-[420px] h-[420px] bg-emerald-500 -top-20 -left-20"></div>
+  <div class="blob blob-anim w-[380px] h-[380px] bg-cyan-500 top-40 -right-10" style="animation-delay:-6s"></div>
+
+  <div class="relative max-w-7xl mx-auto px-5 md:px-8 pt-16 md:pt-20">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7 reveal">
+        <div class="inline-flex items-center gap-2 text-xs font-medium text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-3.5 py-1.5 mb-6">
+          <svg class="w-3.5 h-3.5"><use href="#i-zap"/></svg>
+          IA de Nueva Generación · Análisis en Tiempo Real
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold tracking-tight leading-[1.08] text-white">
+          Domina los mercados con <span class="text-grad">inteligencia artificial</span> de élite
+        </h1>
+        <p class="mt-6 text-lg text-gray-400 max-w-xl leading-relaxed">
+          NEXUS analiza miles de señales de mercado cada hora para construir, proteger y optimizar tu portafolio — con la precisión de un cuant y la disponibilidad de una máquina. 24 horas, 7 días.
+        </p>
+        <div class="mt-9 flex flex-wrap items-center gap-4">
+          <button onclick="document.getElementById('portfolio-lab').scrollIntoView({behavior:'smooth'})" class="group inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-abyss font-bold px-7 py-3.5 rounded-xl hover:shadow-neon transition-all hover:-translate-y-0.5">
+            Iniciar Optimización
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform"><use href="#i-arrow"/></svg>
+          </button>
+          <a href="#sentinel" class="inline-flex items-center gap-2 text-gray-300 hover:text-white border border-white/10 hover:border-white/25 px-6 py-3.5 rounded-xl transition-colors">
+            Ver AI Sentinel
+          </a>
+        </div>
+
+        <div class="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl">
+          <div><div class="text-2xl md:text-3xl font-extrabold text-white"><span data-count="2.8" data-prefix="$" data-suffix="B+">$0B+</span></div><div class="text-xs text-gray-500 mt-1">Activos Analizados</div></div>
+          <div><div class="text-2xl md:text-3xl font-extrabold text-white"><span data-count="150" data-suffix="K+">0K+</span></div><div class="text-xs text-gray-500 mt-1">Inversores Activos</div></div>
+          <div><div class="text-2xl md:text-3xl font-extrabold text-white"><span data-count="99.2" data-suffix="%">0%</span></div><div class="text-xs text-gray-500 mt-1">Uptime del Sistema</div></div>
+          <div><div class="text-2xl md:text-3xl font-extrabold text-white">24/7</div><div class="text-xs text-gray-500 mt-1">Monitoreo Continuo</div></div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 reveal" style="transition-delay:.15s">
+        <div class="relative aspect-square max-w-md mx-auto">
+          <div class="absolute inset-0 rounded-full border border-emerald-500/20"></div>
+          <div class="absolute inset-8 rounded-full border border-cyan-500/15"></div>
+          <div class="absolute inset-16 rounded-full border border-white/5"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-28 h-28 rounded-full bg-gradient-to-br from-emerald-500/30 to-cyan-500/30 grad-border flex items-center justify-center shadow-neon">
+              <svg class="w-12 h-12 text-emerald-300"><use href="#i-globe"/></svg>
+            </div>
+          </div>
+          <div class="orbit-dot bg-emerald-400 shadow-neon" style="--r:150px; animation-duration:14s;"></div>
+          <div class="orbit-dot bg-cyan-400 shadow-cyanGlow" style="--r:110px; animation-duration:10s; animation-direction:reverse;"></div>
+          <div class="orbit-dot bg-white" style="--r:185px; animation-duration:20s;"></div>
+          <div class="orbit-dot bg-emerald-300" style="--r:185px; animation-duration:20s; animation-delay:-10s;"></div>
+        </div>
+        <p class="text-center text-[11px] text-gray-600 mt-6 italic max-w-xs mx-auto">Visual: red neuronal 3D expandiéndose sobre un globo minimalista wireframe, partículas verdes y cian fluyendo entre nodos — estilo cinematográfico futurista</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ 2. WIDGET: AI SENTINEL ============ -->
+<section id="sentinel" class="relative py-24 md:py-32 border-t border-white/5">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="inline-flex items-center gap-2 text-xs font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/25 rounded-full px-3.5 py-1.5 mb-5">
+        <svg class="w-3.5 h-3.5"><use href="#i-news"/></svg> AI SENTINEL · VIGILANCIA 24/7
+      </div>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">La IA que nunca duerme, lee el mercado por ti</h2>
+      <p class="mt-4 text-gray-400 leading-relaxed">Nuestros modelos escanean más de 12.000 fuentes financieras cada hora para destilar las noticias que realmente mueven tu portafolio, con un score de sentimiento calculado automáticamente.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <article class="reveal grad-border rounded-2xl bg-panel/60 overflow-hidden cursor-pointer" onclick="toggleArticle('art-1')">
+        <div class="h-40 relative overflow-hidden bg-gradient-to-br from-emerald-950 to-abyss flex items-center justify-center">
+          <div class="absolute inset-0 opacity-60" style="background: radial-gradient(circle at 30% 30%, rgba(16,185,129,0.35), transparent 60%), radial-gradient(circle at 75% 70%, rgba(6,182,212,0.25), transparent 55%);"></div>
+          <svg class="w-14 h-14 text-emerald-500/40 relative"><use href="#i-building"/></svg>
+          <div class="absolute bottom-2 right-2 text-[9px] text-gray-500 italic text-right max-w-[70%]">IA: fachada minimalista Fed, gráficos de tasas ascendentes en verde neón</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[11px] font-bold tracking-wide text-gray-400">THE WALL STREET JOURNAL</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400">Macro</span>
+          </div>
+          <h3 class="font-bold text-white leading-snug mb-2">La Reserva Federal insinúa una pausa prolongada en las tasas</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">El análisis de sentimiento detecta cautela moderada; la renta fija podría beneficiarse si se confirma la pausa.</p>
+          <div class="mb-1 flex items-center justify-between text-xs">
+            <span class="text-gray-500">Sentiment Score</span>
+            <span class="font-bold text-emerald-400">+58 · Alcista</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-white/5 relative overflow-hidden">
+            <div class="sentiment-fill h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-700" data-target="79" style="width:0%"></div>
+          </div>
+          <div class="mt-3 text-[10px] text-gray-600 flex items-center gap-1">Ver análisis completo <svg class="w-3 h-3"><use href="#i-chevron"/></svg></div>
+          <div class="expand-panel mt-2 pt-3 border-t border-white/5 text-sm text-gray-400 leading-relaxed" id="art-1">
+            Análisis completo IA: el modelo pondera 340 menciones cruzadas en medios especializados y detecta consenso creciente sobre una postura del banco central. Volatilidad implícita en bonos a 10 años en descenso.
+          </div>
+        </div>
+      </article>
+
+      <article class="reveal grad-border rounded-2xl bg-panel/60 overflow-hidden cursor-pointer" style="transition-delay:.1s" onclick="toggleArticle('art-2')">
+        <div class="h-40 relative overflow-hidden bg-gradient-to-br from-cyan-950 to-abyss flex items-center justify-center">
+          <div class="absolute inset-0 opacity-60" style="background: radial-gradient(circle at 25% 25%, rgba(6,182,212,0.4), transparent 55%), radial-gradient(circle at 80% 75%, rgba(16,185,129,0.2), transparent 55%);"></div>
+          <svg class="w-14 h-14 text-cyan-500/40 relative"><use href="#i-cpu"/></svg>
+          <div class="absolute bottom-2 right-2 text-[9px] text-gray-500 italic text-right max-w-[70%]">IA: chip futurista con circuitos iluminados en cian, macro producto</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[11px] font-bold tracking-wide text-gray-400">FINANCIAL TIMES</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400">Tecnología</span>
+          </div>
+          <h3 class="font-bold text-white leading-snug mb-2">Gigantes tecnológicos aceleran inversión en infraestructura de IA</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">Las menciones positivas sobre semiconductores y centros de datos alcanzan máximos trimestrales.</p>
+          <div class="mb-1 flex items-center justify-between text-xs">
+            <span class="text-gray-500">Sentiment Score</span>
+            <span class="font-bold text-emerald-400">+81 · Fuertemente Alcista</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-white/5 relative overflow-hidden">
+            <div class="sentiment-fill h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-700" data-target="90" style="width:0%"></div>
+          </div>
+          <div class="mt-3 text-[10px] text-gray-600 flex items-center gap-1">Ver análisis completo <svg class="w-3 h-3"><use href="#i-chevron"/></svg></div>
+          <div class="expand-panel mt-2 pt-3 border-t border-white/5 text-sm text-gray-400 leading-relaxed" id="art-2">
+            Análisis completo IA: el volumen de cobertura sobre GPUs y centros de datos creció 34% intertrimestral. El modelo identifica continuidad del rally en la cadena de suministro de semiconductores.
+          </div>
+        </div>
+      </article>
+
+      <article class="reveal grad-border rounded-2xl bg-panel/60 overflow-hidden cursor-pointer" style="transition-delay:.2s" onclick="toggleArticle('art-3')">
+        <div class="h-40 relative overflow-hidden bg-gradient-to-br from-amber-950 to-abyss flex items-center justify-center">
+          <div class="absolute inset-0 opacity-60" style="background: radial-gradient(circle at 30% 30%, rgba(245,158,11,0.3), transparent 55%), radial-gradient(circle at 75% 70%, rgba(244,63,94,0.2), transparent 55%);"></div>
+          <svg class="w-14 h-14 text-amber-500/40 relative"><use href="#i-coin"/></svg>
+          <div class="absolute bottom-2 right-2 text-[9px] text-gray-500 italic text-right max-w-[70%]">IA: barras de oro con gráfico holográfico ascendente</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[11px] font-bold tracking-wide text-gray-400">BLOOMBERG</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400">Inflación</span>
+          </div>
+          <h3 class="font-bold text-white leading-snug mb-2">Datos de inflación sorprenden al alza en economías emergentes</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">El modelo predictivo eleva la probabilidad de volatilidad en materias primas y activos de cobertura.</p>
+          <div class="mb-1 flex items-center justify-between text-xs">
+            <span class="text-gray-500">Sentiment Score</span>
+            <span class="font-bold text-rose-400">-34 · Ligeramente Bajista</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-white/5 relative overflow-hidden">
+            <div class="sentiment-fill h-full rounded-full bg-gradient-to-r from-rose-600 to-rose-400 transition-all duration-700" data-target="33" style="width:0%"></div>
+          </div>
+          <div class="mt-3 text-[10px] text-gray-600 flex items-center gap-1">Ver análisis completo <svg class="w-3 h-3"><use href="#i-chevron"/></svg></div>
+          <div class="expand-panel mt-2 pt-3 border-t border-white/5 text-sm text-gray-400 leading-relaxed" id="art-3">
+            Análisis completo IA: se recomienda monitorear activos de cobertura como oro y bienes raíces ante el repunte de precios al productor en mercados emergentes.
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<!-- ============ 3. WIDGET: SMART PORTFOLIO LAB ============ -->
+<section id="portfolio-lab" class="relative py-24 md:py-32 border-t border-white/5 bg-gradient-to-b from-transparent via-emerald-500/[0.03] to-transparent">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-3.5 py-1.5 mb-5">
+        <svg class="w-3.5 h-3.5"><use href="#i-sliders"/></svg> SMART PORTFOLIO LAB
+      </div>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Simula tu futuro financiero en segundos</h2>
+      <p class="mt-4 text-gray-400 leading-relaxed">Ajusta las variables y observa cómo la IA redistribuye tu portafolio en tiempo real para maximizar el rendimiento ajustado al riesgo.</p>
+    </div>
+
+    <div class="reveal grad-border rounded-3xl bg-panel/50 p-6 md:p-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+      <!-- CONTROLES -->
+      <div class="space-y-9">
+        <div>
+          <div class="flex justify-between items-baseline mb-3">
+            <label for="capital-slider" class="text-sm font-medium text-gray-300">Capital Inicial</label>
+            <span id="capital-out" class="text-lg font-bold text-white">$50.000</span>
+          </div>
+          <input type="range" id="capital-slider" class="nexus-slider w-full" min="1000" max="1000000" step="1000" value="50000">
+          <div class="flex justify-between text-[11px] text-gray-600 mt-1.5"><span>$1.000</span><span>$1.000.000</span></div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-baseline mb-3">
+            <label for="time-slider" class="text-sm font-medium text-gray-300">Horizonte Temporal</label>
+            <span id="time-out" class="text-lg font-bold text-white">10 años</span>
+          </div>
+          <input type="range" id="time-slider" class="nexus-slider w-full" min="1" max="30" step="1" value="10">
+          <div class="flex justify-between text-[11px] text-gray-600 mt-1.5"><span>1 año</span><span>30 años</span></div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-baseline mb-3">
+            <label for="risk-slider" class="text-sm font-medium text-gray-300">Nivel de Riesgo <span class="text-gray-600 font-normal">(IA-Driven)</span></label>
+            <span id="risk-out" class="text-lg font-bold text-white">5/10 · Moderado</span>
+          </div>
+          <input type="range" id="risk-slider" class="nexus-slider w-full" min="1" max="10" step="1" value="5">
+          <div class="flex justify-between text-[11px] text-gray-600 mt-1.5"><span>Conservador</span><span>Agresivo</span></div>
+        </div>
+
+        <div class="grad-border rounded-xl p-5 bg-white/[0.02]">
+          <div class="text-xs text-gray-500 mb-4 flex items-center gap-1.5"><svg class="w-3.5 h-3.5"><use href="#i-bars"/></svg> Distribución de Activos Sugerida por IA</div>
+          <div class="flex items-end justify-around h-36 gap-4">
+            <div class="flex flex-col items-center gap-2 flex-1">
+              <span id="stocks-pct" class="text-xs font-bold text-white">37%</span>
+              <div class="w-full max-w-[46px] h-28 bg-white/5 rounded-t-md flex items-end overflow-hidden">
+                <div id="stocks-bar" class="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md transition-all duration-500" style="height:37%"></div>
+              </div>
+              <span class="text-[10px] text-gray-500">Acciones</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 flex-1">
+              <span id="crypto-pct" class="text-xs font-bold text-white">25%</span>
+              <div class="w-full max-w-[46px] h-28 bg-white/5 rounded-t-md flex items-end overflow-hidden">
+                <div id="crypto-bar" class="w-full bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-t-md transition-all duration-500" style="height:25%"></div>
+              </div>
+              <span class="text-[10px] text-gray-500">Cripto</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 flex-1">
+              <span id="re-pct" class="text-xs font-bold text-white">38%</span>
+              <div class="w-full max-w-[46px] h-28 bg-white/5 rounded-t-md flex items-end overflow-hidden">
+                <div id="re-bar" class="w-full bg-gradient-to-t from-violet-600 to-violet-400 rounded-t-md transition-all duration-500" style="height:38%"></div>
+              </div>
+              <span class="text-[10px] text-gray-500">Bienes Raíces</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTADOS -->
+      <div class="flex flex-col justify-center space-y-5">
+        <div class="grad-border rounded-2xl p-6 bg-gradient-to-br from-emerald-500/10 to-cyan-500/5">
+          <div class="text-xs text-gray-400 mb-1.5">Valor Final Estimado</div>
+          <div id="final-value" class="text-3xl md:text-4xl font-extrabold text-white">$112.485</div>
+          <div class="flex items-center gap-1.5 mt-2 text-sm">
+            <svg class="w-4 h-4 text-emerald-400"><use href="#i-up"/></svg>
+            <span id="return-pct" class="text-emerald-400 font-semibold">+125.0%</span>
+            <span class="text-gray-500">de retorno proyectado</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="grad-border rounded-2xl p-5 bg-panel2/60">
+            <div class="text-xs text-gray-500 mb-1.5">Capital Aportado</div>
+            <div id="capital-echo" class="text-xl font-bold text-white">$50.000</div>
+          </div>
+          <div class="grad-border rounded-2xl p-5 bg-panel2/60">
+            <div class="text-xs text-gray-500 mb-1.5">Interés Compuesto</div>
+            <div id="interest-value" class="text-xl font-bold text-cyan-400">$62.485</div>
+          </div>
+        </div>
+        <p class="text-[11px] text-gray-600 leading-relaxed pt-2 border-t border-white/5">* Simulación con fines ilustrativos basada en rendimientos históricos promedio del mercado. El rendimiento pasado no garantiza resultados futuros.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ 4. WIDGET: AI RISK ONBOARDING ============ -->
+<section id="risk-onboarding" class="relative py-24 md:py-32 border-t border-white/5">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="reveal max-w-2xl mb-14 mx-auto text-center">
+      <div class="inline-flex items-center gap-2 text-xs font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/25 rounded-full px-3.5 py-1.5 mb-5">
+        <svg class="w-3.5 h-3.5"><use href="#i-shield"/></svg> AI RISK ONBOARDING
+      </div>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Descubre tu ADN de inversor en 60 segundos</h2>
+      <p class="mt-4 text-gray-400 leading-relaxed">Responde 3 preguntas y deja que la IA diseñe tu diagnóstico de inversión personalizado.</p>
+    </div>
+
+    <div class="reveal grad-border rounded-3xl bg-panel/50 p-6 md:p-12 max-w-2xl mx-auto min-h-[460px] flex flex-col">
+      <div id="quiz-progress" class="flex items-center gap-2 mb-9">
+        <div class="progress-dot h-1.5 flex-1 rounded-full bg-emerald-500 transition-colors"></div>
+        <div class="progress-dot h-1.5 flex-1 rounded-full bg-white/10 transition-colors"></div>
+        <div class="progress-dot h-1.5 flex-1 rounded-full bg-white/10 transition-colors"></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="quiz-step" data-step="1">
+        <h3 class="text-lg font-bold text-white mb-6">¿Cuál es tu horizonte de inversión principal?</h3>
+        <div class="space-y-3" data-group="1">
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(1,1,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Corto plazo — menos de 2 años</span>
+          </button>
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(1,2,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Medio plazo — entre 2 y 5 años</span>
+          </button>
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(1,3,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Largo plazo — más de 5 años</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="quiz-step hidden" data-step="2">
+        <h3 class="text-lg font-bold text-white mb-6">Si tu portafolio cae un 20% en un mes, ¿qué haces?</h3>
+        <div class="space-y-3" data-group="2">
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(2,1,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Vendo para evitar más pérdidas</span>
+          </button>
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(2,2,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Espero y no hago nada</span>
+          </button>
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(2,3,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Compro más, aprovechando el precio bajo</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="quiz-step hidden" data-step="3">
+        <h3 class="text-lg font-bold text-white mb-6">¿Qué porcentaje de tus ingresos destinarías a inversión?</h3>
+        <div class="space-y-3" data-group="3">
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(3,1,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Menos del 10%</span>
+          </button>
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(3,2,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Entre 10% y 25%</span>
+          </button>
+          <button class="option-card w-full flex items-center gap-3 text-left border border-white/10 rounded-xl px-5 py-4 hover:border-white/25" onclick="selectOption(3,3,this)">
+            <span class="option-dot w-5 h-5 rounded-full border-2 border-white/25 flex-shrink-0"></span>
+            <span class="text-sm text-gray-200">Más del 25%</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- LOADING -->
+      <div class="quiz-step hidden flex-1 flex flex-col items-center justify-center text-center py-10" data-step="loading">
+        <div class="relative w-16 h-16 mb-6">
+          <div class="absolute inset-0 rounded-full border-2 border-white/10"></div>
+          <div class="absolute inset-0 rounded-full border-2 border-t-emerald-400 border-r-cyan-400 border-b-transparent border-l-transparent animate-spin"></div>
+          <svg class="w-6 h-6 text-emerald-400 absolute inset-0 m-auto"><use href="#i-cpu"/></svg>
+        </div>
+        <p id="loading-text" class="text-sm text-gray-300 font-medium">Analizando tolerancia al riesgo…</p>
+        <div class="w-48 h-1 bg-white/10 rounded-full mt-5 overflow-hidden"><div id="loading-bar" class="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full" style="width:0%"></div></div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="quiz-step hidden" data-step="result">
+        <div class="text-center mb-7">
+          <div id="result-icon" class="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-4">
+            <svg class="w-8 h-8 text-emerald-400"><use href="#i-bars"/></svg>
+          </div>
+          <p class="text-xs text-gray-500 mb-1">Tu Diagnóstico de Inversión Personalizado</p>
+          <h3 id="result-profile" class="text-2xl font-extrabold text-white">Perfil Moderado</h3>
+        </div>
+        <p id="result-desc" class="text-sm text-gray-400 text-center leading-relaxed mb-7 max-w-md mx-auto">Buscas equilibrio entre crecimiento y seguridad. Un portafolio diversificado maximizará tu rendimiento ajustado al riesgo.</p>
+
+        <div class="flex items-center justify-around mb-8 gap-3">
+          <div class="text-center flex-1">
+            <div id="result-stocks" class="text-lg font-bold text-emerald-400">37%</div>
+            <div class="text-[10px] text-gray-500">Acciones</div>
+          </div>
+          <div class="text-center flex-1">
+            <div id="result-crypto" class="text-lg font-bold text-cyan-400">25%</div>
+            <div class="text-[10px] text-gray-500">Cripto</div>
+          </div>
+          <div class="text-center flex-1">
+            <div id="result-re" class="text-lg font-bold text-violet-400">38%</div>
+            <div class="text-[10px] text-gray-500">Bienes Raíces</div>
+          </div>
+          <div class="text-center flex-1 border-l border-white/10 pl-3">
+            <div id="result-score" class="text-lg font-bold text-white">6/9</div>
+            <div class="text-[10px] text-gray-500">Score IA</div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button onclick="applyToPortfolio()" class="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-abyss font-bold px-6 py-3.5 rounded-xl hover:shadow-neon transition-all">
+            Aplicar a mi Portfolio Lab
+            <svg class="w-4 h-4"><use href="#i-arrow"/></svg>
+          </button>
+          <button onclick="resetQuiz()" class="text-gray-400 hover:text-white border border-white/10 px-6 py-3.5 rounded-xl transition-colors text-sm">Repetir Test</button>
+        </div>
+      </div>
+
+      <div id="quiz-nav" class="flex items-center justify-between mt-auto pt-8">
+        <button id="quiz-back" onclick="prevStep()" class="text-sm text-gray-500 hover:text-white transition-colors invisible">← Atrás</button>
+        <button id="quiz-next" onclick="nextStep()" disabled class="inline-flex items-center gap-1.5 text-sm font-semibold bg-white/10 text-gray-500 px-5 py-2.5 rounded-lg transition-all disabled:cursor-not-allowed">
+          <span id="quiz-next-label">Siguiente</span> <svg class="w-3.5 h-3.5"><use href="#i-arrow"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ 5. WIDGET: ASSET HUB ============ -->
+<section id="asset-hub" class="relative py-24 md:py-32 border-t border-white/5">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-3.5 py-1.5 mb-5">
+        <svg class="w-3.5 h-3.5"><use href="#i-link"/></svg> ASSET HUB
+      </div>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Todo tu ecosistema financiero, conectado</h2>
+      <p class="mt-4 text-gray-400 leading-relaxed max-w-2xl">Vincula tus cuentas favoritas mediante nuestro protocolo de <span class="text-white font-medium">Vínculo Seguro de IA</span> y centraliza tu visión patrimonial en un solo lugar.</p>
+      <div class="mt-4 inline-flex items-center gap-1.5 text-xs text-gray-500">
+        <svg class="w-3.5 h-3.5 text-emerald-500"><use href="#i-lock"/></svg> Cifrado de extremo a extremo · Acceso de solo lectura
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="reveal grad-border rounded-2xl bg-panel/50 p-5" id="asset-ib" data-connected="true">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-300 font-extrabold text-sm">IB</div>
+            <div>
+              <div class="font-bold text-white text-sm">Interactive Brokers</div>
+              <div class="flex items-center gap-1 text-[11px] text-gray-500"><svg class="w-3 h-3 text-amber-400"><use href="#i-star"/></svg> 4.8 · Trading Global</div>
+            </div>
+          </div>
+          <button class="toggle-switch active" onclick="toggleAsset('asset-ib', this)" aria-label="Alternar conexión con Interactive Brokers"></button>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Trading global de acciones, opciones y ETFs en +150 mercados.</p>
+        <div class="status-text flex items-center justify-between text-xs pt-3 border-t border-white/5 text-emerald-400">
+          <span class="flex items-center gap-1.5 font-medium"><span class="status-dot w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span class="status-label">Conectado</span></span>
+          <svg class="w-3.5 h-3.5 text-gray-600"><use href="#i-lock"/></svg>
+        </div>
+        <div class="connection-details mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-3 text-xs">
+          <div><div class="text-gray-500">Balance</div><div class="font-bold text-white">$84.230</div></div>
+          <div><div class="text-gray-500">Sincronizado</div><div class="font-bold text-white">hace 2 min</div></div>
+        </div>
+      </div>
+
+      <div class="reveal grad-border rounded-2xl bg-panel/50 p-5" id="asset-rh" data-connected="false" style="transition-delay:.05s">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-300 font-extrabold text-sm">R</div>
+            <div>
+              <div class="font-bold text-white text-sm">Robinhood</div>
+              <div class="flex items-center gap-1 text-[11px] text-gray-500"><svg class="w-3 h-3 text-amber-400"><use href="#i-star"/></svg> 4.5 · Inversión Simple</div>
+            </div>
+          </div>
+          <button class="toggle-switch" onclick="toggleAsset('asset-rh', this)" aria-label="Alternar conexión con Robinhood"></button>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Inversión simplificada, ideal para el nuevo inversor.</p>
+        <div class="status-text flex items-center justify-between text-xs pt-3 border-t border-white/5 text-gray-500">
+          <span class="flex items-center gap-1.5 font-medium"><span class="status-dot w-1.5 h-1.5 rounded-full bg-gray-600"></span><span class="status-label">No conectado</span></span>
+          <svg class="w-3.5 h-3.5 text-gray-600"><use href="#i-lock"/></svg>
+        </div>
+        <div class="connection-details hidden mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-3 text-xs">
+          <div><div class="text-gray-500">Balance</div><div class="font-bold text-white">$12.450</div></div>
+          <div><div class="text-gray-500">Sincronizado</div><div class="font-bold text-white">ahora</div></div>
+        </div>
+      </div>
+
+      <div class="reveal grad-border rounded-2xl bg-panel/50 p-5" id="asset-bn" data-connected="true" style="transition-delay:.1s">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-300 font-extrabold text-sm">B</div>
+            <div>
+              <div class="font-bold text-white text-sm">Binance</div>
+              <div class="flex items-center gap-1 text-[11px] text-gray-500"><svg class="w-3 h-3 text-amber-400"><use href="#i-star"/></svg> 4.6 · Exchange Cripto</div>
+            </div>
+          </div>
+          <button class="toggle-switch active" onclick="toggleAsset('asset-bn', this)" aria-label="Alternar conexión con Binance"></button>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">El exchange de criptoactivos más líquido del mundo.</p>
+        <div class="status-text flex items-center justify-between text-xs pt-3 border-t border-white/5 text-emerald-400">
+          <span class="flex items-center gap-1.5 font-medium"><span class="status-dot w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span class="status-label">Conectado</span></span>
+          <svg class="w-3.5 h-3.5 text-gray-600"><use href="#i-lock"/></svg>
+        </div>
+        <div class="connection-details mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-3 text-xs">
+          <div><div class="text-gray-500">Balance</div><div class="font-bold text-white">$31.870</div></div>
+          <div><div class="text-gray-500">Sincronizado</div><div class="font-bold text-white">hace 5 min</div></div>
+        </div>
+      </div>
+
+      <div class="reveal grad-border rounded-2xl bg-panel/50 p-5" id="asset-cb" data-connected="false" style="transition-delay:.15s">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-300 font-extrabold text-sm">C</div>
+            <div>
+              <div class="font-bold text-white text-sm">Coinbase</div>
+              <div class="flex items-center gap-1 text-[11px] text-gray-500"><svg class="w-3 h-3 text-amber-400"><use href="#i-star"/></svg> 4.4 · Cripto Regulado</div>
+            </div>
+          </div>
+          <button class="toggle-switch" onclick="toggleAsset('asset-cb', this)" aria-label="Alternar conexión con Coinbase"></button>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Plataforma regulada de compra-venta de criptoactivos.</p>
+        <div class="status-text flex items-center justify-between text-xs pt-3 border-t border-white/5 text-gray-500">
+          <span class="flex items-center gap-1.5 font-medium"><span class="status-dot w-1.5 h-1.5 rounded-full bg-gray-600"></span><span class="status-label">No conectado</span></span>
+          <svg class="w-3.5 h-3.5 text-gray-600"><use href="#i-lock"/></svg>
+        </div>
+        <div class="connection-details hidden mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-3 text-xs">
+          <div><div class="text-gray-500">Balance</div><div class="font-bold text-white">$8.120</div></div>
+          <div><div class="text-gray-500">Sincronizado</div><div class="font-bold text-white">ahora</div></div>
+        </div>
+      </div>
+
+      <div class="reveal grad-border rounded-2xl bg-panel/50 p-5" id="asset-eto" data-connected="false" style="transition-delay:.2s">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-300 font-extrabold text-sm">E</div>
+            <div>
+              <div class="font-bold text-white text-sm">eToro</div>
+              <div class="flex items-center gap-1 text-[11px] text-gray-500"><svg class="w-3 h-3 text-amber-400"><use href="#i-star"/></svg> 4.3 · Social Trading</div>
+            </div>
+          </div>
+          <button class="toggle-switch" onclick="toggleAsset('asset-eto', this)" aria-label="Alternar conexión con eToro"></button>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Copy-trading inteligente e inversión social global.</p>
+        <div class="status-text flex items-center justify-between text-xs pt-3 border-t border-white/5 text-gray-500">
+          <span class="flex items-center gap-1.5 font-medium"><span class="status-dot w-1.5 h-1.5 rounded-full bg-gray-600"></span><span class="status-label">No conectado</span></span>
+          <svg class="w-3.5 h-3.5 text-gray-600"><use href="#i-lock"/></svg>
+        </div>
+        <div class="connection-details hidden mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-3 text-xs">
+          <div><div class="text-gray-500">Balance</div><div class="font-bold text-white">$5.640</div></div>
+          <div><div class="text-gray-500">Sincronizado</div><div class="font-bold text-white">ahora</div></div>
+        </div>
+      </div>
+
+      <div class="reveal grad-border rounded-2xl bg-panel/50 p-5" id="asset-fi" data-connected="false" style="transition-delay:.25s">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-300 font-extrabold text-sm">F</div>
+            <div>
+              <div class="font-bold text-white text-sm">Fidelity</div>
+              <div class="flex items-center gap-1 text-[11px] text-gray-500"><svg class="w-3 h-3 text-amber-400"><use href="#i-star"/></svg> 4.7 · Gestión Patrimonial</div>
+            </div>
+          </div>
+          <button class="toggle-switch" onclick="toggleAsset('asset-fi', this)" aria-label="Alternar conexión con Fidelity"></button>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Gestión patrimonial tradicional de largo plazo.</p>
+        <div class="status-text flex items-center justify-between text-xs pt-3 border-t border-white/5 text-gray-500">
+          <span class="flex items-center gap-1.5 font-medium"><span class="status-dot w-1.5 h-1.5 rounded-full bg-gray-600"></span><span class="status-label">No conectado</span></span>
+          <svg class="w-3.5 h-3.5 text-gray-600"><use href="#i-lock"/></svg>
+        </div>
+        <div class="connection-details hidden mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-3 text-xs">
+          <div><div class="text-gray-500">Balance</div><div class="font-bold text-white">$45.900</div></div>
+          <div><div class="text-gray-500">Sincronizado</div><div class="font-bold text-white">ahora</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ 6. WIDGET: MONITOR DE RENDIMIENTO FISCAL ============ -->
+<section id="fiscal-monitor" class="relative py-24 md:py-32 border-t border-white/5 bg-gradient-to-b from-transparent via-cyan-500/[0.03] to-transparent">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="inline-flex items-center gap-2 text-xs font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/25 rounded-full px-3.5 py-1.5 mb-5">
+        <svg class="w-3.5 h-3.5"><use href="#i-refresh"/></svg> MONITOR DE RENDIMIENTO FISCAL
+      </div>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">La matemática no miente: IA vs. gestión tradicional</h2>
+      <p class="mt-4 text-gray-400 leading-relaxed">Comparamos comisiones, optimización fiscal y velocidad de respuesta entre la gestión algorítmica de NEXUS y la gestión humana tradicional — usando el capital de tu Portfolio Lab: <span id="fiscal-capital-echo" class="text-white font-semibold">$50.000</span>.</p>
+    </div>
+
+    <div class="reveal grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div class="lg:col-span-3 grad-border rounded-3xl bg-panel/50 p-6 md:p-8">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-sm font-semibold text-white flex items-center gap-2"><svg class="w-4 h-4 text-emerald-400"><use href="#i-cpu"/></svg> Gestión Algorítmica NEXUS</span>
+          <span class="text-sm font-bold text-emerald-400">0.25%</span>
+        </div>
+        <div class="h-3 rounded-full bg-white/5 overflow-hidden mb-6">
+          <div id="ai-fee-bar" class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-700" style="width:0%"></div>
+        </div>
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-sm font-semibold text-white flex items-center gap-2"><svg class="w-4 h-4 text-gray-500"><use href="#i-wallet"/></svg> Gestión Humana Tradicional</span>
+          <span class="text-sm font-bold text-gray-400">1.50%</span>
+        </div>
+        <div class="h-3 rounded-full bg-white/5 overflow-hidden mb-8">
+          <div id="human-fee-bar" class="h-full rounded-full bg-gradient-to-r from-gray-500 to-gray-400 transition-all duration-700" style="width:0%"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-y-4 text-sm border-t border-white/5 pt-6">
+          <div class="text-gray-500">Rebalanceo de portafolio</div>
+          <div class="text-right"><span class="text-emerald-400 font-medium">Tiempo real</span> <span class="text-gray-600">vs</span> <span class="text-gray-400">Trimestral</span></div>
+          <div class="text-gray-500">Optimización fiscal (Tax-Loss Harvesting)</div>
+          <div class="text-right"><span class="text-emerald-400 font-medium">Automatizada diaria</span> <span class="text-gray-600">vs</span> <span class="text-gray-400">Manual anual</span></div>
+          <div class="text-gray-500">Disponibilidad</div>
+          <div class="text-right"><span class="text-emerald-400 font-medium">24/7</span> <span class="text-gray-600">vs</span> <span class="text-gray-400">Horario bancario</span></div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 flex flex-col gap-5">
+        <div class="grad-border rounded-2xl p-6 bg-gradient-to-br from-emerald-500/10 to-cyan-500/5 flex-1">
+          <div class="text-xs text-gray-400 mb-1.5">Ahorro Anual en Comisiones</div>
+          <div id="fee-savings" class="text-3xl font-extrabold text-white">$625</div>
+        </div>
+        <div class="grad-border rounded-2xl p-6 bg-panel2/60 flex-1">
+          <div class="text-xs text-gray-500 mb-1.5">Ahorro Fiscal Estimado (Tax-Loss Harvesting)</div>
+          <div id="tax-savings" class="text-2xl font-bold text-cyan-400">$450</div>
+        </div>
+        <div class="grad-border rounded-2xl p-6 bg-panel2/60 flex-1">
+          <div class="text-xs text-gray-500 mb-1.5">Proyección de Ahorro a 10 años</div>
+          <div id="total-savings-10y" class="text-2xl font-bold text-white">$10.750</div>
+        </div>
+      </div>
+    </div>
+    <p class="reveal text-[11px] text-gray-600 mt-6 max-w-2xl">* Cifras estimadas con fines ilustrativos. Los resultados reales dependen de las condiciones de mercado y del proveedor de servicios seleccionado.</p>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/5 pt-16 pb-8 relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-10 pb-12 border-b border-white/5">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <svg class="w-5 h-5"><use href="#i-logo"/></svg>
+          </span>
+          <span class="font-extrabold text-lg text-white">NEXUS <span class="text-grad font-black">AI</span> Finance</span>
+        </div>
+        <p class="text-sm text-gray-500 max-w-xs leading-relaxed">Inteligencia artificial al servicio de tu patrimonio. Análisis, simulación y ejecución — todo en un mismo lugar.</p>
+        <div class="flex gap-3 mt-6">
+          <a href="#" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors" aria-label="X / Twitter">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 3H21l-6.6 7.5L22 21h-6.1l-4.8-6.3L5.6 21H3l7-8-7.2-10h6.3l4.3 5.8L18.2 3z"/></svg>
+          </a>
+          <a href="#" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3V9zm7 0h3.8v1.7h.1c.5-1 1.9-2 3.9-2 4.1 0 4.9 2.7 4.9 6.2V21h-4v-5.7c0-1.4 0-3.1-1.9-3.1s-2.2 1.5-2.2 3v5.8h-4V9z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="text-xs font-semibold text-gray-300 mb-4 tracking-wide">PRODUCTO</div>
+        <ul class="space-y-3 text-sm text-gray-500">
+          <li><a href="#sentinel" class="hover:text-white transition-colors">AI Sentinel</a></li>
+          <li><a href="#portfolio-lab" class="hover:text-white transition-colors">Portfolio Lab</a></li>
+          <li><a href="#risk-onboarding" class="hover:text-white transition-colors">Risk Onboarding</a></li>
+          <li><a href="#asset-hub" class="hover:text-white transition-colors">Asset Hub</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-xs font-semibold text-gray-300 mb-4 tracking-wide">COMPAÑÍA</div>
+        <ul class="space-y-3 text-sm text-gray-500">
+          <li><a href="#" class="hover:text-white transition-colors">Sobre Nosotros</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Carreras</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-xs font-semibold text-gray-300 mb-4 tracking-wide">LEGAL</div>
+        <ul class="space-y-3 text-sm text-gray-500">
+          <li><a href="#" class="hover:text-white transition-colors">Términos de Uso</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Privacidad</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Aviso de Riesgo</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+      <p class="text-xs text-gray-600">© 2026 NEXUS AI Finance. Todos los derechos reservados.</p>
+      <p class="text-xs text-gray-600 max-w-xl leading-relaxed">Plataforma demostrativa con fines ilustrativos. Ninguna información constituye asesoramiento financiero, legal o fiscal. Invertir conlleva riesgo de pérdida de capital.</p>
+    </div>
+  </div>
+</footer>
+<script>
+// ===== UTILIDADES =====
+function formatUSD(n){ return '$' + Math.round(n).toLocaleString('es-ES'); }
+function getAllocation(risk){
+  const crypto = 5 + (risk-1)/9*45;
+  const re = 65 - (risk-1)/9*60;
+  const stocks = 100 - crypto - re;
+  return {stocks, crypto, re};
+}
+function getRiskLabel(risk){
+  if(risk<=3) return 'Conservador';
+  if(risk<=7) return 'Moderado';
+  return 'Agresivo';
+}
+function fillSlider(el){
+  const min=+el.min, max=+el.max, val=+el.value;
+  const pct=(val-min)/(max-min)*100;
+  el.style.background = `linear-gradient(to right, #10B981 0%, #06B6D4 ${pct}%, rgba(255,255,255,0.08) ${pct}%, rgba(255,255,255,0.08) 100%)`;
+}
+
+// ===== HEADER SCROLL STATE =====
+const header = document.getElementById('main-header');
+window.addEventListener('scroll', ()=>{
+  const scrolled = window.scrollY > 40;
+  header.classList.toggle('bg-abyss/80', scrolled);
+  header.classList.toggle('backdrop-blur-xl', scrolled);
+  header.classList.toggle('border-white/5', scrolled);
+}, {passive:true});
+
+// ===== MENÚ MÓVIL =====
+const menuBtn = document.getElementById('menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+const menuIconUse = document.getElementById('menu-icon-use');
+menuBtn.addEventListener('click', ()=>{
+  mobileMenu.classList.toggle('hidden');
+  menuIconUse.setAttribute('href', mobileMenu.classList.contains('hidden') ? '#i-menu' : '#i-close');
+});
+
+// ===== SCROLL SUAVE =====
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', function(e){
+    const targetId = this.getAttribute('href');
+    if(targetId.length>1){
+      const target = document.querySelector(targetId);
+      if(target){
+        e.preventDefault();
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }
+    mobileMenu.classList.add('hidden');
+    menuIconUse.setAttribute('href','#i-menu');
+  });
+});
+
+// ===== REVEAL AL SCROLL + BARRAS DE SENTIMIENTO + CONTADORES =====
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      entry.target.querySelectorAll('.sentiment-fill').forEach(bar=>{
+        bar.style.width = bar.dataset.target + '%';
+      });
+      entry.target.querySelectorAll('[data-count]').forEach(el=>animateCount(el));
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, {threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+
+function animateCount(el){
+  const target = parseFloat(el.dataset.count);
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const isInt = Number.isInteger(target);
+  const duration = 1600;
+  const t0 = performance.now();
+  function step(now){
+    const p = Math.min((now-t0)/duration,1);
+    const eased = 1-Math.pow(1-p,3);
+    const val = target*eased;
+    el.textContent = prefix + (isInt ? Math.floor(val).toLocaleString('es-ES') : val.toFixed(1)) + suffix;
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ===== AI SENTINEL: EXPANDIR ARTÍCULO =====
+function toggleArticle(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ===== SMART PORTFOLIO LAB =====
+const capitalSlider = document.getElementById('capital-slider');
+const timeSlider = document.getElementById('time-slider');
+const riskSlider = document.getElementById('risk-slider');
+
+function updateCalculator(){
+  const capital = +capitalSlider.value;
+  const years = +timeSlider.value;
+  const risk = +riskSlider.value;
+
+  fillSlider(capitalSlider); fillSlider(timeSlider); fillSlider(riskSlider);
+
+  document.getElementById('capital-out').textContent = formatUSD(capital);
+  document.getElementById('time-out').textContent = years + (years===1 ? ' año' : ' años');
+  document.getElementById('risk-out').textContent = risk + '/10 · ' + getRiskLabel(risk);
+
+  const rate = 0.04 + (risk-1)*(0.14-0.04)/9;
+  const finalValue = capital*Math.pow(1+rate, years);
+  const interest = finalValue-capital;
+  const returnPct = (finalValue/capital-1)*100;
+
+  document.getElementById('final-value').textContent = formatUSD(finalValue);
+  document.getElementById('capital-echo').textContent = formatUSD(capital);
+  document.getElementById('interest-value').textContent = formatUSD(interest);
+  document.getElementById('return-pct').textContent = '+'+returnPct.toFixed(1)+'%';
+
+  const alloc = getAllocation(risk);
+  document.getElementById('stocks-bar').style.height = alloc.stocks+'%';
+  document.getElementById('crypto-bar').style.height = alloc.crypto+'%';
+  document.getElementById('re-bar').style.height = alloc.re+'%';
+  document.getElementById('stocks-pct').textContent = Math.round(alloc.stocks)+'%';
+  document.getElementById('crypto-pct').textContent = Math.round(alloc.crypto)+'%';
+  document.getElementById('re-pct').textContent = Math.round(alloc.re)+'%';
+
+  syncFiscalMonitor(capital);
+}
+[capitalSlider, timeSlider, riskSlider].forEach(el=>el.addEventListener('input', updateCalculator));
+
+// ===== MONITOR DE RENDIMIENTO FISCAL =====
+function syncFiscalMonitor(capital){
+  const aiRate=0.0025, humanRate=0.015, taxRate=0.009;
+  const aiFee=capital*aiRate, humanFee=capital*humanRate;
+  const feeSavings=humanFee-aiFee;
+  const taxSavings=capital*taxRate;
+  const total10y=(feeSavings+taxSavings)*10;
+
+  document.getElementById('fiscal-capital-echo').textContent = formatUSD(capital);
+  document.getElementById('fee-savings').textContent = formatUSD(feeSavings);
+  document.getElementById('tax-savings').textContent = formatUSD(taxSavings);
+  document.getElementById('total-savings-10y').textContent = formatUSD(total10y);
+  document.getElementById('ai-fee-bar').style.width = (aiRate/humanRate*100)+'%';
+  document.getElementById('human-fee-bar').style.width = '100%';
+}
+
+// ===== AI RISK ONBOARDING =====
+let quizStep = 1;
+const quizAnswers = {1:null, 2:null, 3:null};
+let diagnosisRisk = 5;
+
+function selectOption(step, points, el){
+  quizAnswers[step] = points;
+  el.parentElement.querySelectorAll('.option-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  renderQuizNav();
+}
+function renderQuizNav(){
+  const backBtn = document.getElementById('quiz-back');
+  const nextBtn = document.getElementById('quiz-next');
+  const label = document.getElementById('quiz-next-label');
+  backBtn.classList.toggle('invisible', quizStep===1);
+  const answered = quizAnswers[quizStep] !== null;
+  nextBtn.disabled = !answered;
+  nextBtn.classList.toggle('bg-gradient-to-r', answered);
+  nextBtn.classList.toggle('from-emerald-500', answered);
+  nextBtn.classList.toggle('to-cyan-500', answered);
+  nextBtn.classList.toggle('text-abyss', answered);
+  nextBtn.classList.toggle('shadow-neon', answered);
+  nextBtn.classList.toggle('bg-white/10', !answered);
+  nextBtn.classList.toggle('text-gray-500', !answered);
+  label.textContent = quizStep===3 ? 'Finalizar Diagnóstico' : 'Siguiente';
+}
+function showQuizStep(name){
+  document.querySelectorAll('.quiz-step').forEach(s=>s.classList.add('hidden'));
+  document.querySelector(`.quiz-step[data-step="${name}"]`).classList.remove('hidden');
+}
+function updateDots(step){
+  document.querySelectorAll('.progress-dot').forEach((d,i)=>{
+    d.classList.toggle('bg-emerald-500', i<step);
+    d.classList.toggle('bg-white/10', i>=step);
+  });
+}
+function nextStep(){
+  if(quizAnswers[quizStep]===null) return;
+  if(quizStep<3){
+    quizStep++;
+    showQuizStep(quizStep);
+    updateDots(quizStep);
+    renderQuizNav();
+  } else {
+    runDiagnosis();
+  }
+}
+function prevStep(){
+  if(quizStep===1) return;
+  quizStep--;
+  showQuizStep(quizStep);
+  updateDots(quizStep);
+  renderQuizNav();
+}
+const loadingMessages = ['Evaluando tolerancia al riesgo…','Calculando horizonte óptimo…','Cruzando datos con modelos de mercado…','Generando diagnóstico personalizado…'];
+function runDiagnosis(){
+  document.getElementById('quiz-nav').classList.add('hidden');
+  showQuizStep('loading');
+  let idx=0;
+  const loadingText = document.getElementById('loading-text');
+  const loadingBar = document.getElementById('loading-bar');
+  loadingText.textContent = loadingMessages[0];
+  loadingBar.style.transition = 'width 2200ms linear';
+  loadingBar.style.width = '0%';
+  const interval = setInterval(()=>{ idx=(idx+1)%loadingMessages.length; loadingText.textContent=loadingMessages[idx]; }, 550);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ loadingBar.style.width='100%'; }));
+  setTimeout(()=>{ clearInterval(interval); showDiagnosis(); }, 2300);
+}
+function showDiagnosis(){
+  const score = quizAnswers[1]+quizAnswers[2]+quizAnswers[3];
+  let profile, desc, risk, iconId;
+  if(score<=4){
+    profile='Perfil Conservador'; risk=2; iconId='#i-shield';
+    desc='Priorizas la preservación de capital. La IA recomienda una asignación defensiva con énfasis en bienes raíces y activos estables.';
+  } else if(score<=7){
+    profile='Perfil Moderado'; risk=5; iconId='#i-bars';
+    desc='Buscas equilibrio entre crecimiento y seguridad. Un portafolio diversificado maximizará tu rendimiento ajustado al riesgo.';
+  } else {
+    profile='Perfil Agresivo'; risk=9; iconId='#i-zap';
+    desc='Persigues el máximo crecimiento y toleras la volatilidad. La IA sugiere sobreponderar activos digitales y renta variable de alto potencial.';
+  }
+  diagnosisRisk = risk;
+  const alloc = getAllocation(risk);
+  document.getElementById('result-profile').textContent = profile;
+  document.getElementById('result-desc').textContent = desc;
+  document.getElementById('result-stocks').textContent = Math.round(alloc.stocks)+'%';
+  document.getElementById('result-crypto').textContent = Math.round(alloc.crypto)+'%';
+  document.getElementById('result-re').textContent = Math.round(alloc.re)+'%';
+  document.getElementById('result-score').textContent = score+'/9';
+  document.getElementById('result-icon').innerHTML = `<svg class="w-8 h-8 text-emerald-400"><use href="${iconId}"/></svg>`;
+  showQuizStep('result');
+}
+function resetQuiz(){
+  quizStep = 1;
+  quizAnswers[1]=quizAnswers[2]=quizAnswers[3]=null;
+  document.querySelectorAll('.option-card').forEach(c=>c.classList.remove('selected'));
+  showQuizStep(1);
+  updateDots(1);
+  document.getElementById('quiz-nav').classList.remove('hidden');
+  renderQuizNav();
+}
+function applyToPortfolio(){
+  riskSlider.value = diagnosisRisk;
+  updateCalculator();
+  document.getElementById('portfolio-lab').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// ===== ASSET HUB =====
+function toggleAsset(cardId, btn){
+  const card = document.getElementById(cardId);
+  const connected = card.dataset.connected === 'true';
+  const dot = card.querySelector('.status-dot');
+  const label = card.querySelector('.status-label');
+  const wrap = card.querySelector('.status-text');
+  const details = card.querySelector('.connection-details');
+
+  if(connected){
+    card.dataset.connected = 'false';
+    btn.classList.remove('active');
+    wrap.classList.remove('text-emerald-400'); wrap.classList.add('text-gray-500');
+    dot.classList.remove('bg-emerald-400'); dot.classList.add('bg-gray-600');
+    label.textContent = 'No conectado';
+    details.classList.add('hidden');
+  } else {
+    btn.classList.add('active');
+    wrap.classList.remove('text-gray-500'); wrap.classList.add('text-amber-400');
+    dot.classList.remove('bg-gray-600'); dot.classList.add('bg-amber-400','animate-pulse-slow');
+    label.textContent = 'Conectando…';
+    setTimeout(()=>{
+      card.dataset.connected = 'true';
+      wrap.classList.remove('text-amber-400'); wrap.classList.add('text-emerald-400');
+      dot.classList.remove('bg-amber-400','animate-pulse-slow'); dot.classList.add('bg-emerald-400');
+      label.textContent = 'Conectado';
+      details.classList.remove('hidden');
+    }, 900);
+  }
+}
+
+// ===== INIT =====
+updateCalculator();
+renderQuizNav();
+</script>
+</body>
+</html>
